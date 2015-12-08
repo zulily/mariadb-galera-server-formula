@@ -1,0 +1,10 @@
+{% set mariadb_galera_server = salt['grains.filter_by']({
+    'Debian': {
+        'package': 'mariadb-galera-server',
+        'framework_package': 'galera-3',
+        'service': 'mysql',
+        'conf_file': '/etc/mysql/my.cnf',
+        'conf_d_dir': '/etc/mysql/conf.d',
+        'init_script': '/etc/init.d/mysql'
+    },
+}, default='Debian' ) %}

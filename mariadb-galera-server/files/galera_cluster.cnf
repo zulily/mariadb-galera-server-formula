@@ -1,0 +1,34 @@
+[mysqld]
+{%- set cluster_members = {} %}
+{%- for cluster_member in salt['pillar.get']('mariadb_galera_server:settings:members', []).keys() %}
+  {%- do cluster_members.update({ cluster_member:salt['dnsutil.A'](cluster_member)[0] }) %}
+{%- endfor %}
+wsrep_cluster_address         = gcomm://
+{%- for host, ip in cluster_members.iteritems() -%}
+  {{ ip }}{% if not loop.last %},{% else %}?pc.wait_prim=no{% endif %}
+{%- endfor %}
+wsrep_cluster_name            = {{ salt['pillar.get']('mariadb_galera_server:cluster_name', 'mariadb_galera_server') }}
+wsrep_node_address            = {{ cluster_members[grains['host']] }}
+wsrep_node_name               = {{ grains['host'] }}
+wsrep_sst_method              = rsync
+wsrep_provider_options        = "socket.ssl_cert=/etc/mysql/cert.pem; socket.ssl_key=/etc/mysql/key.pem"
+# notify is not bundled with this formula
+#wsrep_notify_cmd              = /usr/local/bin/galera_notify
+#wsrep_node_incoming_address   = {{ cluster_members[grains['host']] }}
+#wsrep_sst_receive_address     = {{ cluster_members[grains['host']] }}
+
+# * Galera Provider Configuration
+wsrep_provider = /usr/lib/galera/libgalera_smm.so
+
+# * Galera Synchronization Configuration
+# rsync doesn't require setting wsrep_sst_auth, xtrabackup-v2 does require credentials if used.
+# xtrabackup-v2 doesn't require a global lock and writes may continue, unlike rsync
+# Info on grants for xtrabackup-v2:
+#   http://www.percona.com/doc/percona-xtradb-cluster/5.5/howtos/ubuntu_howto.html
+wsrep_sst_method = rsync
+
+
+# Server-specific settings and overrides
+{%- for pair in salt['pillar.get']('mariadb_galera_server:settings:members:' + grains['host'] + ':mysqld', []) %}
+{{ pair.keys()[0] }} = {{ pair[pair.keys()[0]] }}
+{%- endfor %}

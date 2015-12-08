@@ -1,0 +1,113 @@
+mariadb_galera_server:
+  cluster_name: my-cluster
+  settings:
+    base:
+      default:
+        hold: True
+        galera_hold: True
+    members:
+      mariadb1:
+        first_member: True
+        mysqld:
+          - wsrep_slave_threads: 4
+          - server_id: 1
+          - innodb_buffer_pool_size: 768M
+      mariadb2:
+        mysqld:
+          - wsrep_slave_threads: 4
+          - server_id: 1
+          - innodb_buffer_pool_size: 768M
+      mariadb3:
+        mysqld:
+          - wsrep_slave_threads: 4
+          - server_id: 1
+          - innodb_buffer_pool_size: 768M
+      mariadb4:
+        mysqld:
+          - wsrep_slave_threads: 4
+          - server_id: 1
+          - innodb_buffer_pool_size: 768M
+    performance:
+      vm_swappiness: 5
+
+  # Example user configuration, hashes only provided as placeholders
+  users:
+    present:
+      root:
+        password_hash: "*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B"
+        grants:
+          - { priv_type: 'all privileges', database: "'*.*'" }
+        hosts:
+          - localhost
+          - 127.0.0.1
+          - ::1
+          - {{ grains['fqdn'] }}
+      api_user:
+        password_hash: "*F6DD300F491B9E43DE0B3493DDB718B4A0B46BA8"
+        grants:
+          - { priv_type: 'all privileges', database: "'infrastructure.*'" }
+        hosts:
+          - localhost
+          - 127.0.0.1
+      monitoring:
+        password_hash: "*27E48091D61C6D373A9162746C3A1948C579A2FF"
+        grants:
+          - { priv_type: 'PROCESS, SELECT, SUPER', database: "'*.*'" }
+        hosts:
+          - localhost
+          - 127.0.0.1
+    absent:
+      - initialization_user # Leave initialization_user to be last in the list
+
+mariadb_galera_server_ssl:
+  cluster_name: mariadb_galera_server
+  cert: |
+    -----BEGIN CERTIFICATE-----
+    MIIDbDCCAlQCCQDXhqFZhd5FgzANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJV
+    UzETMBEGA1UECAwKV2FzaGluZ3RvbjEQMA4GA1UEBwwHU2VhdHRsZTEUMBIGA1UE
+    CgwLZm9vYmFyLCBsbGMxFzAVBgNVBAsMDkluZnJhc3RydWN0dXJlMRMwEQYDVQQD
+    DApteS1jbHVzdGVyMB4XDTE1MTIwODA2NDEzNFoXDTE2MDEwNzA2NDEzNFoweDEL
+    MAkGA1UEBhMCVVMxEzARBgNVBAgMCldhc2hpbmd0b24xEDAOBgNVBAcMB1NlYXR0
+    bGUxFDASBgNVBAoMC2Zvb2JhciwgbGxjMRcwFQYDVQQLDA5JbmZyYXN0cnVjdHVy
+    ZTETMBEGA1UEAwwKbXktY2x1c3RlcjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+    AQoCggEBAJYQZJUoF1Dx2waGOlp2C53g2Gst6GCel8hf92/hMUF3nO0G7zrT4HPc
+    5OCZChqwR2riSzqkWNjqcf6S4Ag8kHJZsiBDtXZ/DZxReFfgAqJTxgtfJMVkEPu9
+    dJ88NlEid674zbqr+h4txeXIpEXU5kMt8HL0OdljiB0NmDJ/PgYLEmdIhesZiiOc
+    rEJ5Xi/BX40Kam1iF9udDjms3T7KWcmq0EhO3FPl5U+DJ9jxdme1i3LOZSZf6TDP
+    upX1MJv2qP2zML+t3baJ8Ikz6mhnEH3XF2uT2jvUjKbm5vZqbfbwi2F7UBu/jsnm
+    2jEDDshSQ2rIJlXQW8duxM6I/Y9+9ncCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEA
+    ROFeoAzoYTjvKrPRPKcLRfg7TsPxbdeUCttSLx1Qo2mgaq5wYPXZOVk4SET5u4W7
+    cNj97SXBqtLz8sCzzDNQ6hY7J+eTPRbHQwQ5CLHFm67YDFEs/lMpv43RRchDGyqL
+    LvO9EJLfmf4reC6JyJp3mIgQ2EMaSwqlcivhf6iLBmgjIxzrEBZCYzn50nYR6+/0
+    3KDPoR6q80/y19asVvo+5aegpCk8hztjLXWNxe5xaz1NVRBHfFPf3yeYSfRWEk20
+    R5U0cLPaXrqIByj6MM+lWWnVFLXEaV1EzLJsS5PkshIoh0OKR+OIU6tybHWHPKgk
+    DYFc4vEXCXt4rnroLyblEg==
+    -----END CERTIFICATE-----
+  key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIEpQIBAAKCAQEAlhBklSgXUPHbBoY6WnYLneDYay3oYJ6XyF/3b+ExQXec7Qbv
+    OtPgc9zk4JkKGrBHauJLOqRY2Opx/pLgCDyQclmyIEO1dn8NnFF4V+AColPGC18k
+    xWQQ+710nzw2USJ3rvjNuqv6Hi3F5cikRdTmQy3wcvQ52WOIHQ2YMn8+BgsSZ0iF
+    6xmKI5ysQnleL8FfjQpqbWIX250OOazdPspZyarQSE7cU+XlT4Mn2PF2Z7WLcs5l
+    Jl/pMM+6lfUwm/ao/bMwv63dtonwiTPqaGcQfdcXa5PaO9SMpubm9mpt9vCLYXtQ
+    G7+OyebaMQMOyFJDasgmVdBbx27Ezoj9j372dwIDAQABAoIBACgu2ZArPRsauEil
+    9sg0ZeXvyGPi1h/RN9mbAPn/dh4OtoGt4q+A/tBnrQ4LTO5al7UiRXy9d2EWXlIJ
+    6F2sQg2swQrstpG1ceKS2kPFo07uWdC/uGv24KlYUPs2t2DAdwXub8B1vrMIFL70
+    HDDq0oHYslNF3Ju+kDsfYcrb0bLyKQ2piXJZ5MBCe5/ab+q5HwOqcG+DkXpr6f3Q
+    ET7KOKmR8DH/aYV7rE0Wb8E6PFPUq93Wnleh9kv8riZEhtVN9wXzYW87sGsKMkXy
+    m1QQ50wFWb6HNtJ3LLPT5ou4VCCVo+CmsnbDHVxh88V2kR7Zzr7jv65X7i6bNPj9
+    9Jm3TwkCgYEAx7P+lfFpMOv0HVFAkv6CKCjinYGfRJo2j0IDaA8lFAru+FDHTtDR
+    fGOtcI84MjVd5uGyN+pib6Eso6RsXzn5EnUR0jdx2ZKLlJyV5Ug7V/c2cwCvsDzN
+    FXULXvksUiff58xUyetQTzkXEl8ZfVxfoN7n56aQEvOHvGV6V/R5ZAUCgYEAwF4W
+    f97MeN7cCkbOoKq0K4UaPzsluuig2v2kXaTDfdo8ybc0D0V5EXxjcCJLEAesW7GX
+    ALHAnaqcMAj/CQ1P0HK+LKXUxPNVpcArk0XzGb1WLOMyZJXO1Wb6LLCwJKK8fYEg
+    s7X2UHN04daiRPJcMpcK/j/Oelwd8ntsmQklVUsCgYEAn/oc89kUP1CFmgbBCABC
+    HBHEmBCCmd4/3rsvJ2kadtfbX6i2QPkfF9px0j2o8u+1bYNX1Vs5x9sBe4X4GsDC
+    Onr178Tiuzyd/EsD+UzH3Uv4nl/qXfAXCh1dIpPRYW73+yTAt5B+ITjGtrzgGoCp
+    SqHGfNf9inD0R4OzYkpCBFECgYEArrHDRQSUNABPW5XJ9+aOECekGmAgd4ji630E
+    U3ZZgmU6ZwVU5bl1pQeNVjwOZtRRFkREmYDTJ1vU01qYISRRoz9QrUM74lAJK6lE
+    6U3Q40Mqi0EYdngFiY8nCoa6r8qJ2n/1rr5EnfL75kwAuRRP3jGE7jgLztrw51Bm
+    4uOHX9kCgYEAq/ltWCKszLXfqGeXrlrZz2bL1Ax/8zkLugaVNT3nfpgJ306wNuGQ
+    fOJCgpxMs/g06Ri6fEK374bk7O4SHYTprEKyPV8U0UCZ108B3MamfwOivKbmfVMx
+    I1vHOSyVAll0j4M5a5l2Fc2+RxfXhPFAZicao9yXQivHbS/0nRl5Y0o=
+    -----END RSA PRIVATE KEY-----
