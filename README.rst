@@ -2,7 +2,7 @@
 mariadb-galera-server
 =====================
 
-The mariadb-galera-server formula and pillar data may be used to bring up a new mariadb galera cluster of any size in a matter of seconds.  Additionally, the users.sls state file may be used to manage users and grants on any MySQL-like database server.
+The mariadb-galera-server formula and pillar data may be used to bring up a new mariadb galera cluster of any size in a matter of minutes.  Additionally, the users.sls state file may be used to manage users and grants on any MySQL-like database server.
 
 .. note::
 
