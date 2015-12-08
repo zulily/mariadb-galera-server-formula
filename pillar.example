@@ -59,6 +59,7 @@ mariadb_galera_server:
     absent:
       - initialization_user # Leave initialization_user to be last in the list
 
+# Example key pair, DO NOT USE THESE!
 mariadb_galera_server_ssl:
   cluster_name: mariadb_galera_server
   cert: |
