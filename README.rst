@@ -17,7 +17,7 @@ Available states
 
 ``mariadb-galera-server``
 -------------------------
-The main entry point, including all of the necessary state files to get a new mariadb galera member joined to the cluster.  It is also capable of bringing up the 'primary' node.  Outside of user management which are run separately, this is the only sls file that is typically every called.
+The main entry point, including all of the necessary state files to get a new mariadb galera member joined to the cluster.  It is also capable of bringing up the 'primary' node.  Outside of user management states which are run separately, this is the only sls file that is typically every called.
 
 ``config``
 ----------
